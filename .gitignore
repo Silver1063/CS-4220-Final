@@ -5,3 +5,4 @@ mock_database/search_history.json
 mock_database/search_cache.json
 mock_database/search_cache.json
 mock_database/search_history.json
+.env

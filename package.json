@@ -1,17 +1,21 @@
 {
-    "name": "launch-library-2-cli-search",
+    "name": "launch-library-2-server-app",
     "version": "1.0.0",
-    "description": "A command line application that interacts with the Launch Library 2 api",
-    "main": "app.js",
+    "description": "Server application that interacts with the Launch Library 2 api",
     "type": "module",
+    "main": "server.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "dev": "echo \"Error: no test specified\" && exit 1"
     },
-    "author": "Alexandra Barahona, Dexter Kale, Edward Eckle, Justin Guerra, Melissa Hernandez",
+    "author": "Edward Eckle",
+    "contributors": ["Alexandra Barahona", "Dexter Kale", "Justin Guerra", "Melissa Hernandez"],
     "license": "ISC",
     "dependencies": {
         "axios": "^1.6.8",
         "commander": "^7.2.0",
+        "dotenv": "^16.4.5",
+        "express": "^4.19.2",
+        "mongodb": "^6.6.1",
         "readline-sync": "^1.4.10"
     }
 }

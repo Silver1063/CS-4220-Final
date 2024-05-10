@@ -1,74 +1,85 @@
-import fs from 'fs';
-import path from 'path';
-import url from 'url';
-
-// in ECMAScript Modules (ESM), __dirname is not available directly like in CommonJS
-// use 'url' and 'path' modules to achieve similar functionality
-const __filename = url.fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// define the path to the mock database directory
-const dbDirectory = path.resolve(__dirname, 'mock_database');
+import { MongoClient } from 'mongodb';
 
 /**
- * Reads and parses JSON data from a file
- * @param {string} collection - the name of the collection file
- * @returns {Promise<Array|Object>} the parsed JSON data from the collection
- * @throws {Error} an error if there's an issue reading or parsing the data
+ * Class representing a MongoDB database connection and interactions
  */
-const _read = async (collection) => {
-    try {
-        const fullPath = path.resolve(dbDirectory, `${collection}.json`);
-        const data = await fs.promises.readFile(fullPath, 'utf-8');
-        return JSON.parse(data);
-    } catch (error) {
-        throw new Error(
-            `Error reading data from collection ${collection}: ${error.message}`
-        );
+export class MongoDB {
+    /**
+     * constructor
+     * Loads a .env, initializes a MongoDB connection URL using environment variables,
+     * and sets up properties for the MongoDB client and database
+     */
+    constructor(db_user, db_password, db_host, db_name) {
+        this.mongoURL = `mongodb+srv://${db_user}:${db_password}@${db_host}/${db_name}?retryWrites=true&w=majority&appName=Cluster0`;
     }
-};
 
-/**
- * Creates a new entry in a collection
- * @param {string} collection - the name of the collection file
- * @param {Object} data - the data to be added to the collection
- * @returns {Promise<void>} a Promise that resolves when the operation is complete
- * @throws {Error} an error if there's an issue creating the record
- */
-export const create = async (collection, data) => {
-    try {
-        const records = await _read(collection);
-        records.push(data);
+    /**
+     * Opens a connection to the MongoDB database
+     */
+    async connect() {
+        try {
+            this.client = new MongoClient(this.mongoURL);
+            await this.client.connect();
+            this.db = this.client.db();
 
-        const fullPath = path.resolve(dbDirectory, `${collection}.json`);
-        await fs.promises.writeFile(fullPath, JSON.stringify(records));
-    } catch (error) {
-        throw new Error(
-            `Error creating record in collection ${collection}: ${error.message}`
-        );
-    }
-};
-
-/**
- * Finds all records or a record by ID in a collection
- * @param {string} collection - the name of the collection file
- * @param {string|null} id - the id of the record to find. if null, all records will be returned
- * @returns {Promise<Array|Object|null>} the record(s) found in the collection
- * @throws {Error} an error if there's an issue finding the record(s)
- */
-export const find = async (collection, id = null) => {
-    try {
-        const records = await _read(collection);
-
-        if (id) {
-            const record = records.find((record) => record.id === id);
-            return record;
-        } else {
-            return records;
+            console.log('Connected to MongoDB');
+        } catch (err) {
+            console.error(err);
         }
-    } catch (error) {
-        throw new Error(
-            `Error finding record in collection ${collection}: ${error.message}`
-        );
     }
-};
+
+    /**
+     * Closes the connection to the MongoDB database.
+     */
+    async close() {
+        try {
+            await this.client.close();
+
+            console.log('Closed connection to MongoDB');
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    /**
+     * Creates a new document in the specified collection
+     * @param {string} collectionName - the name of the collection
+     * @param {Object} data - the data to be inserted into the collection
+     * @returns {Promise<Object>} - a Promise that resolves with the acknowledgement document
+     */
+    async create(collectionName, data) {
+        try {
+            const collection = this.db.collection(collectionName);
+            const result = await collection.insertOne(data);
+            return result;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    /**
+     * Finds documents by their _id in the specified collection
+     * @param {string} collectionName - the name of the collection
+     * @param {string} _id - the _id of the document to find
+     * @returns {Promise<Cursor>} - a Promise that resolves with the cursor
+     */
+    async find(collectionName, _id) {
+        try {
+            const collection = this.db.collection(collectionName);
+
+            if (_id) {
+                const result = await collection.find({
+                    _id: _id
+                });
+                return result;
+            } else {
+                const result = await collection.find({});
+                return result;
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async update(collectionName, data) {}
+}
