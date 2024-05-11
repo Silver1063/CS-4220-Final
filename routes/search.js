@@ -1,6 +1,5 @@
 import express from 'express';
 import { searchByKeyword, getDetailsByID } from '../services/api.js';
-import { MongoDB } from '../services/db.js';
 
 const router = express.Router();
 
