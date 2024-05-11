@@ -1,3 +1,9 @@
+import express from 'express';
+import { searchByKeyword, getDetailsByID } from '../services/api.js';
+import { MongoDB } from '../services/db.js';
+
+const router = express.Router();
+
 // 1. Endpoint GET /search
 
 // This endpoint accepts a query parameter: searchTerm
@@ -18,7 +24,12 @@
 //    "lastSearched":  // (Date) the date/time the last search was performed for the given keyword
 // }
 
-router.get('/', async (req, res) => {});
+router.get('/', async (req, res) => {
+    try {
+    } catch (error) {
+        res.status(500).join(error);
+    }
+});
 
 // 2. Endpoint GET /search/:id/details
 
@@ -36,6 +47,12 @@ router.get('/', async (req, res) => {});
 // Attempts to find the selected item in the search_cache collection in MongoDB and returns it if found.
 // If the item is not found in the search_cache collection, retrieves the selected item by unique identifier from the API.
 // Saves an entry in the search_cache collection in MongoDB
-router.get('/:id/details', async (req, res) => {});
+
+router.get('/:id/details', async (req, res) => {
+    try {
+    } catch (error) {
+        res.status(500).join(error);
+    }
+});
 
 export default router;
