@@ -25,8 +25,13 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
+        const { query } = req;
+
+        const results = await searchByKeyword(query.keyword);
+
+        res.json(results);
     } catch (error) {
-        res.status(500).join(error);
+        res.status(500).json(error);
     }
 });
 
@@ -49,8 +54,14 @@ router.get('/', async (req, res) => {
 
 router.get('/:id/details', async (req, res) => {
     try {
+        const { query, params } = req;
+        const { id } = params;
+
+        const details = await getDetailsByID(id);
+
+        res.json(details);
     } catch (error) {
-        res.status(500).join(error);
+        res.status(500).json(error);
     }
 });
 

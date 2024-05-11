@@ -11,6 +11,7 @@ const router = express.Router();
 
 router.get('/history', async (req, res) => {
     try {
+        res.json({ test: 'hello from /history' });
     } catch (error) {
         res.status(500).json(error);
     }
