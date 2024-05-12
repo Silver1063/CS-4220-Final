@@ -4,7 +4,6 @@ import { db } from '../server.js';
 
 const router = express.Router();
 
-
 router.get('/', async (req, res) => {
     try {
         const { query } = req;
@@ -56,8 +55,33 @@ router.get('/:id/details', async (req, res) => {
         const { query, params } = req;
         const { id } = params;
 
-        const details = await getDetailsByID(id);
+        const collection = 'search_cache';
+        // NOT _id: ObjectId
+        // This is the id we use to find the details
+        const filter = { id: id };
 
+        let details = {};
+
+        if (query.cache) {
+            console.log(filter);
+            const cursor = await db.find(collection, filter);
+            const count = await cursor.count();
+            console.log(count);
+            if (count > 0) {
+                details = await cursor.next();
+                console.log('Details found in cache');
+                res.json(details);
+                return;
+            } else {
+                console.log('Details not found in cache');
+            }
+        }
+
+        details = await getDetailsByID(id);
+        details['id'] = id;
+        await db.create(collection, details);
+
+        console.log('Details retrieved from API and cached');
         res.json(details);
     } catch (error) {
         res.status(500).json(error);

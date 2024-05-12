@@ -60,13 +60,13 @@ export class MongoDB {
     /**
      * Finds documents by their _id in the specified collection
      * @param {string} collectionName - the name of the collection
-     * @param {string} _id - the _id of the document to find
+     * @param {Object} filter - the the filter used to find the document
      * @returns {Promise<Cursor>} - a Promise that resolves with the cursor
      */
     async find(collectionName, filter = {}) {
         try {
             const collection = this.db.collection(collectionName);
-            const result = await collection.find(filter);
+            const result = await collection.findOne(filter);
             return result;
         } catch (err) {
             console.error(err);
