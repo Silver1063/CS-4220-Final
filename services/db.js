@@ -63,14 +63,12 @@ export class MongoDB {
      * @param {string} _id - the _id of the document to find
      * @returns {Promise<Cursor>} - a Promise that resolves with the cursor
      */
-    async find(collectionName, _id) {
+    async find(collectionName, filter = {}) {
         try {
             const collection = this.db.collection(collectionName);
 
-            if (_id) {
-                const result = await collection.find({
-                    _id: _id
-                });
+            if (filter) {
+                const result = await collection.find(filter);
                 return result;
             } else {
                 const result = await collection.find({});
@@ -81,5 +79,20 @@ export class MongoDB {
         }
     }
 
-    async update(collectionName, data) {}
+    /**
+     * Finds documents by their _id in the specified collection
+     * @param {string} collectionName - the name of the collection
+     * @param {string} _id - the _id of the document to find
+     * @param {Object} data - the data to be inserted into the collection
+     * @returns {Promise<Cursor>} - a Promise that resolves with the cursor
+     */
+    async update(collectionName, filter, data) {
+        try {
+            const collection = this.db.collection(collectionName);
+            const result = await collection.updateOne(filter, { $set: data });
+            return result;
+        } catch (err) {
+            console.error(err);
+        }
+    }
 }

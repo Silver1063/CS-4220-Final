@@ -13,7 +13,7 @@ const app = express();
 dotenv.config();
 const { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME } = process.env;
 
-const db = new MongoDB(DB_USER, DB_PASSWORD, DB_HOST, DB_NAME);
+export const db = new MongoDB(DB_USER, DB_PASSWORD, DB_HOST, DB_NAME);
 
 app.get('/', (req, res) => {
     res.send('Welcome to the Launch Library 2 Server App');

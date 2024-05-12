@@ -1,35 +1,37 @@
 import express from 'express';
 import { searchByKeyword, getDetailsByID } from '../services/api.js';
+import { db } from '../server.js';
 
 const router = express.Router();
-
-// 1. Endpoint GET /search
-
-// This endpoint accepts a query parameter: searchTerm
-// This endpoint should searches the selected API by the provided search term
-// The endpoint should compose a minimal JSON response results array
-// The results array should only contains two keys:
-// one key should represent the unique identifier
-// one key should represent display text related to the search result
 
 // This endpoint should also create an entry in the search_history collection in MongoDB
 // If this search term does not exist in Mongo DB then create a new document to be saved into your Mongo DB search_history Collection
 // If this search term does exist in Mongo DB then update the document with the a new date for lastSearched
 
-// EXAMPLE DOCUMENT
-// {
-//    "searchTerm"     // (String) the search term the user entered
-//    "searchCount":   // (Int) the matching result count from the API
-//    "lastSearched":  // (Date) the date/time the last search was performed for the given keyword
-// }
-
 router.get('/', async (req, res) => {
     try {
         const { query } = req;
 
-        const results = await searchByKeyword(query.keyword);
+        const results = await searchByKeyword(query.searchTerm);
+        const filter = { searchTerm: query.searchTerm };
 
-        res.json(results);
+        const document = {
+            searchTerm: query.searchTerm,
+            searchCount: results.length,
+            lastSearched: new Date()
+        };
+
+        const cursor = await db.find('search_history', filter);
+        const arr = await cursor.toArray();
+
+        if (arr.length) {
+            await db.update('search_history', filter, {
+                lastSearched: new Date()
+            });
+        } else {
+            await db.create('search_history', document);
+        }
+        res.json(document);
     } catch (error) {
         res.status(500).json(error);
     }
