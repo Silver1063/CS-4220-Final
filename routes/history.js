@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
 
         // let because mutable
         let cursor;
-
         // if searchTerm not provided find everything, else use the filter
         if (query.searchTerm) {
             cursor = await db.find(collection, filter);
