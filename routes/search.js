@@ -4,9 +4,6 @@ import { db } from '../server.js';
 
 const router = express.Router();
 
-// This endpoint should also create an entry in the search_history collection in MongoDB
-// If this search term does not exist in Mongo DB then create a new document to be saved into your Mongo DB search_history Collection
-// If this search term does exist in Mongo DB then update the document with the a new date for lastSearched
 
 router.get('/', async (req, res) => {
     try {

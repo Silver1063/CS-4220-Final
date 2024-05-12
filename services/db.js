@@ -66,14 +66,8 @@ export class MongoDB {
     async find(collectionName, filter = {}) {
         try {
             const collection = this.db.collection(collectionName);
-
-            if (filter) {
-                const result = await collection.find(filter);
-                return result;
-            } else {
-                const result = await collection.find({});
-                return result;
-            }
+            const result = await collection.find(filter);
+            return result;
         } catch (err) {
             console.error(err);
         }
