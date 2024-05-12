@@ -1,10 +1,13 @@
 # How to setup
+
 ```
 npm install
 ```
 
-# How to run 
+# How to run
+
 ```
-node cli.js
+node server.js
 ```
+
 You did it 🥳🥳🥳
