@@ -74,6 +74,22 @@ export class MongoDB {
     }
 
     /**
+     * Checks if collection contains at least one document that matches the filter
+     * @param {string} collectionName - the name of the collection
+     * @param {Object} filter - the the filter used to find the document
+     * @returns {Promise<Boolean>} - a Promise that resolves with the cursor
+     */
+    async has(collectionName, filter = {}) {
+        try {
+            const collection = this.db.collection(collectionName);
+            const result = (await collection.countDocuments(filter)) > 0;
+            return result;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    /**
      * Finds documents by their _id in the specified collection
      * @param {string} collectionName - the name of the collection
      * @param {string} _id - the _id of the document to find

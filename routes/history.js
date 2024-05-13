@@ -3,6 +3,7 @@ import { db } from '../server.js';
 
 const router = express.Router();
 
+// the /history endpoint implementation
 router.get('/', async (req, res) => {
     try {
         const { query } = req;
